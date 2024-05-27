@@ -6,6 +6,8 @@ import { QueryProvider } from "@/providers/query-provider";
 
 import "./globals.css";
 
+import { SheetProvider } from "@/providers/sheet-provider";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -21,8 +23,11 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={inter.className}>
-          <QueryProvider>{children}</QueryProvider>
+        <body className={`${inter.className} antialiased`}>
+          <QueryProvider>
+            <SheetProvider />
+            {children}
+          </QueryProvider>
         </body>
       </html>
     </ClerkProvider>

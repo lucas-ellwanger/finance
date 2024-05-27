@@ -17,6 +17,7 @@ const config = {
     "^@/db/(.*)$",
     "^@/hooks/(.*)$",
     "^@/providers/(.*)$",
+    "^@/features/(.*)$",
     "^@/components/ui/(.*)$",
     "^@/components/(.*)$",
     "^@/app/(.*)$",

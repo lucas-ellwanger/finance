@@ -1,4 +1,5 @@
 import { pgTableCreator, text } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
 
 const pgTable = pgTableCreator((name) => `finance_${name}`);
 
@@ -8,3 +9,5 @@ export const accounts = pgTable("accounts", {
   name: text("name").notNull(),
   userId: text("user_id").notNull(),
 });
+
+export const insertAccountSchema = createInsertSchema(accounts);
