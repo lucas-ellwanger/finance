@@ -2,11 +2,8 @@
 "use client";
 
 // Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
+import type { PropsWithChildren } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-type Props = {
-  children: React.ReactNode;
-};
 
 function makeQueryClient() {
   return new QueryClient({
@@ -36,7 +33,7 @@ function getQueryClient() {
   }
 }
 
-export function QueryProvider({ children }: Props) {
+export function QueryProvider({ children }: PropsWithChildren) {
   // NOTE: Avoid useState when initializing the query client if you don't
   //       have a suspense boundary between this and the code that may
   //       suspend because React will throw away the client on the initial

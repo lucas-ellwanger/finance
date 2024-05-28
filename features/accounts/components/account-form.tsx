@@ -53,6 +53,8 @@ export const AccountForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
+        autoCapitalize="off"
+        autoComplete="off"
         className="space-y-4 pt-4"
       >
         <FormField
@@ -61,6 +63,7 @@ export const AccountForm = ({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>
+
               <FormControl>
                 <Input
                   {...field}
@@ -68,13 +71,14 @@ export const AccountForm = ({
                   placeholder="e.g. Cash, Bank, Credit Card"
                 />
               </FormControl>
+
               <FormMessage />
             </FormItem>
           )}
         />
 
         <Button className="w-full" disabled={disabled}>
-          {!!id ? "Save changes" : "Create account"}
+          {id ? "Save changes" : "Create account"}
         </Button>
 
         {!!id && (
