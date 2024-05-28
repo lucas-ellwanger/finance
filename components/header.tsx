@@ -20,7 +20,14 @@ export const Header = () => {
           </ClerkLoading>
 
           <ClerkLoaded>
-            <UserButton afterSignOutUrl="/" />
+            <UserButton
+              afterSignOutUrl="/"
+              appearance={{
+                elements: {
+                  userButtonAvatarBox: "size-9",
+                },
+              }}
+            />
           </ClerkLoaded>
         </div>
 
