@@ -31,7 +31,7 @@ const app = new Hono()
       const { from, to, accountId } = c.req.valid("query");
 
       if (!auth?.userId) {
-        return c.json({ error: "Unauthorized" }, 401);
+        return c.json({ error: "Unauthorized." }, 401);
       }
 
       const defaultTo = new Date();

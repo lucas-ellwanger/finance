@@ -3,6 +3,7 @@ import { Trash } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { convertAmountToMilliunits } from "@/lib/utils";
 import { insertTransactionSchema } from "@/db/schema";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { AmountInput } from "@/components/amount-input";
 import { DatePicker } from "@/components/date-picker";
 import { Select } from "@/components/select";
 
@@ -61,8 +63,13 @@ export const TransactionForm = ({
   });
 
   const handleSubmit = (values: FormValues) => {
-    // onSubmit(values);
-    console.log({ values });
+    const amount = parseFloat(values.amount);
+    const amountInMilliunits = convertAmountToMilliunits(amount);
+
+    onSubmit({
+      ...values,
+      amount: amountInMilliunits,
+    });
   };
 
   const handleDelete = () => {
@@ -155,6 +162,26 @@ export const TransactionForm = ({
                   disabled={disabled}
                   placeholder="Add a payee"
                   {...field}
+                />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="amount"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Amount</FormLabel>
+
+              <FormControl>
+                <AmountInput
+                  {...field}
+                  disabled={disabled}
+                  placeholder="0.00"
                 />
               </FormControl>
 
