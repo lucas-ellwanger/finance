@@ -39,9 +39,17 @@ export const Select = ({
           borderColor: "#E2E8F0",
           ":hover": {
             borderColor: "#E2E8F0",
+            cursor: "pointer",
           },
         }),
       }}
+      theme={(theme) => ({
+        ...theme,
+        colors: {
+          ...theme.colors,
+          neutral50: "#64748B", // Placeholder color
+        },
+      })}
       value={formattedValue}
       onChange={onSelect}
       options={options}
