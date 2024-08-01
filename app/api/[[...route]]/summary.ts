@@ -25,7 +25,7 @@ const app = new Hono().get(
     const { from, to, accountId } = c.req.valid("query");
 
     if (!auth?.userId) {
-      return c.json({ error: "Unauthorized" }, 401);
+      return c.json({ error: "Unauthorized." }, 401);
     }
 
     const defaultTo = new Date();
@@ -40,6 +40,8 @@ const app = new Hono().get(
     const lastPeriodStart = subDays(startDate, periodLength);
     const lastPeriodEnd = subDays(endDate, periodLength);
 
+    console.log({ lastPeriodStart, lastPeriodEnd });
+
     async function fetchFinancialData(
       userId: string,
       startDate: Date,
@@ -48,11 +50,11 @@ const app = new Hono().get(
       return await db
         .select({
           income:
-            sql`sum(case when ${transactions.amount} >= 0 then ${transactions.amount} else 0 end)`.mapWith(
+            sql`SUM(CASE WHEN ${transactions.amount} >= 0 THEN ${transactions.amount} ELSE 0 END)`.mapWith(
               Number
             ),
           expenses:
-            sql`sum(case when ${transactions.amount} < 0 then ${transactions.amount} else 0 end)`.mapWith(
+            sql`SUM(CASE WHEN ${transactions.amount} < 0 THEN ${transactions.amount} ELSE 0 END)`.mapWith(
               Number
             ),
           remaining: sum(transactions.amount).mapWith(Number),
@@ -76,18 +78,20 @@ const app = new Hono().get(
     );
     const [lastPeriod] = await fetchFinancialData(
       auth.userId,
-      startDate,
-      endDate
+      lastPeriodStart,
+      lastPeriodEnd
     );
 
     const incomeChange = calculatePercentageChange(
       currentPeriod.income,
       lastPeriod.income
     );
+
     const expensesChange = calculatePercentageChange(
       currentPeriod.expenses,
       lastPeriod.expenses
     );
+
     const remainingChange = calculatePercentageChange(
       currentPeriod.remaining,
       lastPeriod.remaining
@@ -96,7 +100,7 @@ const app = new Hono().get(
     const category = await db
       .select({
         name: categories.name,
-        value: sql`sum(abs(${transactions.amount}))`.mapWith(Number),
+        value: sql`SUM(ABS(${transactions.amount}))`.mapWith(Number),
       })
       .from(transactions)
       .innerJoin(accounts, eq(transactions.accountId, accounts.id))
@@ -111,7 +115,7 @@ const app = new Hono().get(
         )
       )
       .groupBy(categories.name)
-      .orderBy(desc(sql`sum(abs(${transactions.amount}))`));
+      .orderBy(desc(sql`SUM(ABS(${transactions.amount}))`));
 
     const topCategories = category.slice(0, 3);
     const otherCategories = category.slice(3);
@@ -121,22 +125,19 @@ const app = new Hono().get(
     );
 
     const finalCategories = topCategories;
-    if (otherCategories.length > 0) {
-      finalCategories.push({
-        name: "Other",
-        value: otherSum,
-      });
-    }
+
+    if (otherCategories.length > 0)
+      finalCategories.push({ name: "Other", value: otherSum });
 
     const activeDays = await db
       .select({
         date: transactions.date,
         income:
-          sql`sum(case when ${transactions.amount} >= 0 then ${transactions.amount} else 0 end)`.mapWith(
+          sql`SUM(CASE WHEN ${transactions.amount} >= 0 THEN ${transactions.amount} ELSE 0 END)`.mapWith(
             Number
           ),
         expenses:
-          sql`sum(case when ${transactions.amount} < 0 then ${transactions.amount} else 0 end)`.mapWith(
+          sql`SUM(CASE WHEN ${transactions.amount} < 0 THEN ABS(${transactions.amount}) ELSE 0 END)`.mapWith(
             Number
           ),
       })
