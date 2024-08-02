@@ -101,7 +101,7 @@ export const DataCard = ({
   );
 };
 
-export const DataCardSkeleton = () => {
+export const DataCardLoading = () => {
   return (
     <Card className="h-[192px] border-none drop-shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between gap-x-4">

@@ -6,7 +6,7 @@ import { FaArrowTrendDown, FaArrowTrendUp } from "react-icons/fa6";
 
 import { formatDateRange } from "@/lib/utils";
 import { useGetSummary } from "@/features/summary/api/use-get-summary";
-import { DataCard, DataCardSkeleton } from "@/components/data-card";
+import { DataCard, DataCardLoading } from "@/components/data-card";
 
 export const DataGrid = () => {
   const { data, isLoading } = useGetSummary();
@@ -20,9 +20,9 @@ export const DataGrid = () => {
   if (isLoading) {
     return (
       <div className="mb-8 grid grid-cols-1 gap-8 pb-2 lg:grid-cols-3">
-        <DataCardSkeleton />
-        <DataCardSkeleton />
-        <DataCardSkeleton />
+        <DataCardLoading />
+        <DataCardLoading />
+        <DataCardLoading />
       </div>
     );
   }
