@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { format, subDays } from "date-fns";
+import { addDays, format, subDays } from "date-fns";
 import { ChevronDown } from "lucide-react";
 import qs from "query-string";
 import { DateRange } from "react-day-picker";
 
-import { cn, formatDateRange } from "@/lib/utils";
-import { useGetSummary } from "@/features/summary/api/use-get-summary";
+import { formatDateRange } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -19,20 +18,20 @@ import {
 } from "@/components/ui/popover";
 
 export const DateFilter = () => {
-  const router = useRouter();
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const params = useSearchParams();
-  const accountId = params.get("accountId");
-  const from = params.get("from") || "";
-  const to = params.get("to") || "";
+  const accountId = searchParams.get("accountId");
+  const from = searchParams.get("from") || "";
+  const to = searchParams.get("to") || "";
 
   const defaultTo = new Date();
   const defaultFrom = subDays(defaultTo, 30);
 
   const paramState = {
-    from: from ? new Date(from) : defaultFrom,
-    to: to ? new Date(to) : defaultTo,
+    from: from ? addDays(new Date(from), 1) : defaultFrom,
+    to: to ? addDays(new Date(to), 1) : defaultTo,
   };
 
   const [date, setDate] = useState<DateRange | undefined>(paramState);
@@ -49,7 +48,7 @@ export const DateFilter = () => {
         url: pathname,
         query,
       },
-      { skipNull: true, skipEmptyString: true }
+      { skipEmptyString: true, skipNull: true }
     );
 
     router.push(url);
@@ -67,9 +66,10 @@ export const DateFilter = () => {
           disabled={false}
           size="sm"
           variant="outline"
-          className="h-9 w-full justify-between rounded-md border-none bg-white/10 px-3 font-normal text-white outline-none transition hover:bg-white/20 hover:text-white focus:bg-white/30 focus:ring-transparent focus:ring-offset-0 lg:w-auto"
+          className="h-9 w-full rounded-md border-none bg-white/10 px-3 font-normal text-white outline-none transition hover:bg-white/30 hover:text-white focus:bg-white/30 focus:ring-transparent focus:ring-offset-0 lg:w-auto"
         >
           <span>{formatDateRange(paramState)}</span>
+
           <ChevronDown className="ml-2 size-4 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -84,17 +84,19 @@ export const DateFilter = () => {
           onSelect={setDate}
           numberOfMonths={2}
         />
+
         <div className="flex w-full items-center gap-x-2 p-4">
           <PopoverClose asChild>
             <Button
               onClick={onReset}
               disabled={!date?.from || !date?.to}
-              variant="outline"
               className="w-full"
+              variant="outline"
             >
               Reset
             </Button>
           </PopoverClose>
+
           <PopoverClose asChild>
             <Button
               onClick={() => pushToUrl(date)}
