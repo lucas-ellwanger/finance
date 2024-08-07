@@ -32,22 +32,30 @@ export const Select = ({
   return (
     <CreatableSelect
       placeholder={placeholder}
-      className="h-10 text-sm"
+      className="h-10 rounded-md border border-input text-sm"
       styles={{
         control: (base) => ({
           ...base,
-          borderColor: "#E2E8F0",
-          ":hover": {
-            borderColor: "#E2E8F0",
-            cursor: "pointer",
-          },
+          border: 0,
+          boxShadow: "none",
+          cursor: "pointer",
+        }),
+        option: (base) => ({
+          ...base,
+          cursor: "pointer",
+          width: "available",
+          borderRadius: 6,
+          margin: "2px 6px 2px 6px",
         }),
       }}
       theme={(theme) => ({
         ...theme,
         colors: {
           ...theme.colors,
-          neutral50: "#64748B", // Placeholder color
+          primary: "#0e1829",
+          primary50: "white",
+          primary25: "#f1f5f9",
+          neutral50: "#64748B",
         },
       })}
       value={formattedValue}
@@ -55,6 +63,7 @@ export const Select = ({
       options={options}
       onCreateOption={onCreate}
       isDisabled={disabled}
+      isSearchable={false}
     />
   );
 };
